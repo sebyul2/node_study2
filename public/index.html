@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>node study</title>
+  <link href="css/default.css" rel="stylesheet">
+  <link href="http://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <table id="example" class="ui celled table display dataTable no-footer" style="width:100%"></table>
+
+  <div id="my_popup">
+    <div style="text-align:right;">
+      <button class="button popup-button" onclick="closePopup();">X</button>
+    </div>
+    <div class="popup-header">
+      <div class="popup-title"></div>
+    </div>
+    <div class="popup-body">
+    </div>
+  </div>
+
+  <!-- Scripts-->
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-popup-overlay/1.7.9/jquery.popupoverlay.js"></script>
+  <script>
+    let dataSet = [
+        [1, '첫 번째 게시글', 'aster', '2019-04-02', '내용1'],
+        [2, '두 번째 게시글', 'aster', '2019-04-02', '내용2'],
+        [3, '세 번째 게시글', 'aster', '2019-04-02', '내용3'],
+        [4, '네 번째 게시글', 'aster', '2019-04-02', '내용4'],
+        [5, '다섯 번째 게시글', 'aster', '2019-04-02', '내용5'],
+    ]
+
+    $(document).ready(function () {
+      $('#example').DataTable({
+        ordering: false,
+        searching: false,
+        paging: false,
+        bInfo: false,
+        data: dataSet,
+        // ajax: {
+        //   url: '/board',
+        //   dataSrc: function (json) {
+        //     dataSet = json
+        //     return json
+        //   }
+        // },
+        columns: [{
+            title: "번호",
+            width: "10%",
+            className: "dt-center"
+          },
+          {
+            title: "제목",
+            width: "60%",
+            className: "dt-center",
+            fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
+              $(nTd).html("<a href='#' onclick='openPopup(" + iRow + ")'>" + sData + "</a>")
+            }
+          },
+          {
+            title: "작성자",
+            width: "15%",
+            className: "dt-center"
+          },
+          {
+            title: "작성일",
+            width: "15%",
+            className: "dt-center"
+          }
+        ]
+      })
+
+      $('#my_popup').popup({
+        type: 'overlay',
+        transition: 'all 0.5s'
+      })
+    })
+
+    function openPopup(index) {
+      $('#my_popup').popup('show')
+      $('.popup-title').text(dataSet[index][1]) //제목
+      $('.popup-body').html(dataSet[index][4]) //내용
+    }
+
+    function closePopup(index) {
+      $('#my_popup').popup('hide')
+      $('.popup-title').text('')
+      $('.popup-body').html('')
+    }
+  </script>
+</body>
+
+</html>
