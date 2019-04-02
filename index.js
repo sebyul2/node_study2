@@ -17,7 +17,7 @@ app.get('/board', (req, res) => {
     [4, '네 번째 게시글', 'aster', '2019-04-02', '내용4'],
     [5, '다섯 번째 게시글', 'aster', '2019-04-02', '내용5'],
   ]
-  res.json(data)  //nnhgnghdgfgbfg
+  res.json(data)  //nnhgnghdgfgbfgffsdf
 })
 
 app.set('port', process.env.PORT || 80);
