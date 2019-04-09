@@ -1,0 +1,15 @@
+# mongodb를 docer & docker-compose 로 실행하기 위한 설정 파일입니다.
+version: '3.1'
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: "mongo_study"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: study
+    ports:
+    - 27017:27017
+    # volumes:
+    # - /Volumes/data/docker/db/mongodb/:/data/db
+

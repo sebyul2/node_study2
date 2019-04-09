@@ -29,28 +29,25 @@
   <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-popup-overlay/1.7.9/jquery.popupoverlay.js"></script>
   <script>
-    let dataSet = [
-        [1, '첫 번째 게시글', 'aster', '2019-04-02', '내용1'],
-        [2, '두 번째 게시글', 'aster', '2019-04-02', '내용2'],
-        [3, '세 번째 게시글', 'aster', '2019-04-02', '내용3'],
-        [4, '네 번째 게시글', 'aster', '2019-04-02', '내용4'],
-        [5, '다섯 번째 게시글', 'aster', '2019-04-02', '내용5'],
-    ]
 
+    let dataSet = []
+    
     $(document).ready(function () {
+      //selector # = id
+      //         . = class
       $('#example').DataTable({
         ordering: false,
         searching: false,
         paging: false,
         bInfo: false,
-        data: dataSet,
-        // ajax: {
-        //   url: '/board',
-        //   dataSrc: function (json) {
-        //     dataSet = json
-        //     return json
-        //   }
-        // },
+        // data: dataSet,
+        ajax: {
+          url: '/board',
+          dataSrc: function (json) {
+            dataSet = json
+            return json
+          }
+        },
         columns: [{
             title: "번호",
             width: "10%",

@@ -1,0 +1,50 @@
+table.dataTable a:link,
+table.dataTable a:visited,
+table.dataTable a:active {
+    text-decoration: none;
+    color: #788487;
+}
+
+table.dataTable a:hover {
+    text-decoration: underline;
+    color: #788487;
+}
+
+#my_popup {
+    opacity: 0;
+    visibility: hidden;
+    display: inline-block;
+    outline: none;
+    transition: all 0.3s;
+    position: relative;
+    vertical-align: middle;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 1200px;
+    min-height: 720px;
+}
+
+.popup-header {
+    font-weight: bold;
+    margin: 15px 10px;
+    text-align: center;
+}
+
+.popup-title {
+    font-size: 14pt;
+    margin: 50px 10px;
+}
+
+.popup-body {
+    font-size: 10pt;
+    margin: 50px 10px 50px 50px;
+    background-color: #ffffff;
+}
+
+.popup-button, .popup-button:active {
+    border:0;
+    color:dimgrey;
+    background-color: #ffffff;
+    margin: 10px 10px 0 0;
+    font-size: 30px;
+}
