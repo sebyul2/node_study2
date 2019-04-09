@@ -60,6 +60,7 @@
             fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
               $(nTd).html("<a href='#' onclick='openPopup(" + iRow + ")'>" + sData + "</a>")
             }
+            // <a href openPopup("제목", "내용")>
           },
           {
             title: "작성자",
@@ -80,10 +81,10 @@
       })
     })
 
-    function openPopup(index) {
+    function openPopup(title, content) {
       $('#my_popup').popup('show')
-      $('.popup-title').text(dataSet[index][1]) //제목
-      $('.popup-body').html(dataSet[index][4]) //내용
+      $('.popup-title').text(title) //제목
+      $('.popup-body').html(content) //내용
     }
 
     function closePopup(index) {

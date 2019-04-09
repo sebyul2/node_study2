@@ -25,7 +25,7 @@ app.get('/board', function (req, res) { // /board로 접속시
     // .then으로 연결한 부분엔 성공시 결과를 받아옵니다. < * promise 문법입니다.>
     .then(function (doc) {  // doc에 우리가 사용할 데이터가 들어있습니다.
       const dataToArray = []; // datatable 모듈에서는 배열로 데이터를 받습니다. 데이터를 넣을 배열 공간을 미리 만들어둡니다.
-      for (i=0; i<doc.length; i++) {  // 반복문을 통해 doc의 길이만큼 반복합니다.
+      for (let i=0; i<doc.length; i++) {  // 반복문을 통해 doc의 길이만큼 반복합니다.
         const item = doc[i] // doc는 배열로 되어있습니다. doc[0]은 배열의 0번째 데이터를 가져온다는 뜻입니다. 
         // doc[0]은 다시 {index:0, title:'제목', name:'이름', date:'날짜', content:'내용'} 형식으로 되어있습니다.
         // doc[0].index로 0번째 데이터의 index를, doc[0].title 로 0번째 데이터의 title을 가져올 수 있습니다.
@@ -43,8 +43,21 @@ app.get('/board', function (req, res) { // /board로 접속시
     })
 })
 
+app.post('/board', function (req, res) { 
+  userModel.create()
+}) // create 해야됨
+app.put('/board/:index', function (req, res) {
+  userModel.update()
+}) // update < option: 안해도됨 >
+app.delete('/board/:index', function (req, res) {
+  userModel.delete()
+}) // delete < option: 안해도됨 >
+app.get('/board/:index', function (req, res) {
+  userModel.findOne()
+}) // getOne < option: 안해도됨 >)
+
 // 게시판 조회 (최신 문법 + map)
-// async를 사용하면 .then, .catch(이와 같은 문법을 사용하는 것을 프로미스라 합니다)를 하지 않고도
+// async/await를 사용하면 .then, .catch(이와 같은 문법을 사용하는 것을 프로미스라 합니다)를 하지 않고도
 // 보다 간결하게 비동기 코드를 작성할 수 있습니다. es6 (node.js 8버전) 이상부터 지원합니다.
 // 또한 arrow function 문법을 명시적으로 사용해서 비교해보았습니다.
 // 특별한 경우 제외하고는 일반적인 function (arg) {} 문법을 (arg) => {}로 대체 할 수 있습니다.
