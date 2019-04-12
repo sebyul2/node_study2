@@ -7,6 +7,8 @@ const userModel = require('./model/user-model') // 몽구스로 만든 user mode
 
 const app = express()
 
+app.use(express.json()) // 내장 body-parser 모듈. json 형태의 데이터를 파싱해서 req.body로 보내줍니다.
+app.use(express.urlencoded({ extended: false })); // url 인코딩된 body를 파싱해서 req.body로 보내줍니다.
 // static resource
 app.use(express.static(path.join(__dirname, 'public')))
 
@@ -44,16 +46,48 @@ app.get('/board', function (req, res) { // /board로 접속시
 })
 
 app.post('/board', function (req, res) { 
-  userModel.create()
+  const { index, title, name, date, content } = req.body
+  console.log(req.body)
+  userModel.create({index, title, name, date, content}).then(() => {
+    res.json({result:'success'})
+  }).catch(err => {
+    console.error(err)
+    res.status(500).json({result:'fail'})
+  })
 }) // create 해야됨
 app.put('/board/:index', function (req, res) {
-  userModel.update()
+  const { index } = req.params
+  const { title, name, date, content } = req.body
+  userModel.updateOne({ index: index }, {index, title, name, date, content}).then(result => {
+    res.json({result:'success'})
+  }).catch(err => {
+    console.error(err)
+    res.status(500).json({result:'fail'})
+  })
 }) // update < option: 안해도됨 >
 app.delete('/board/:index', function (req, res) {
-  userModel.delete()
+  const { index } = req.params
+  userModel.deleteOne({ index: index }).then(result => {
+    res.json({result:'success'})
+  }).catch(err => {
+    console.error(err)
+    res.status(500).json({result:'fail'})
+  })
 }) // delete < option: 안해도됨 >
 app.get('/board/:index', function (req, res) {
-  userModel.findOne()
+  const { index } = req.params
+  userModel.findOne({ index: index }).then(result => {
+    res.json({result: {
+      index: result.index,
+      title: result.title,
+      name: result.name,
+      data: result.data,
+      content: result.content,
+    }})
+
+  }).catch(err => {
+    console.error(err)
+  })
 }) // getOne < option: 안해도됨 >)
 
 // 게시판 조회 (최신 문법 + map)
