@@ -46,18 +46,20 @@ app.get('/board', function (req, res) { // /board로 접속시
 })
 
 app.post('/board', function (req, res) { 
-  const { index, title, name, date, content } = req.body
-  console.log(req.body)
-  userModel.create({index, title, name, date, content}).then(() => {
+  const { title, name, content } = req.body
+  const date = new Date()
+  userModel.create({title, name, date, content}).then(() => {
     res.json({result:'success'})
   }).catch(err => {
     console.error(err)
     res.status(500).json({result:'fail'})
   })
 }) // create 해야됨
+
 app.put('/board/:index', function (req, res) {
-  const { index } = req.params
-  const { title, name, date, content } = req.body
+  const index = parseInt(req.params.index)
+  const { title, name, content } = req.body
+  const date = new Date()
   userModel.updateOne({ index: index }, {index, title, name, date, content}).then(result => {
     res.json({result:'success'})
   }).catch(err => {
@@ -65,6 +67,7 @@ app.put('/board/:index', function (req, res) {
     res.status(500).json({result:'fail'})
   })
 }) // update < option: 안해도됨 >
+
 app.delete('/board/:index', function (req, res) {
   const { index } = req.params
   userModel.deleteOne({ index: index }).then(result => {
@@ -74,6 +77,7 @@ app.delete('/board/:index', function (req, res) {
     res.status(500).json({result:'fail'})
   })
 }) // delete < option: 안해도됨 >
+
 app.get('/board/:index', function (req, res) {
   const { index } = req.params
   userModel.findOne({ index: index }).then(result => {
@@ -81,7 +85,6 @@ app.get('/board/:index', function (req, res) {
       index: result.index,
       title: result.title,
       name: result.name,
-      data: result.data,
       content: result.content,
     }})
 
@@ -115,7 +118,7 @@ app.get('/board2', async (req, res) => { // async 형태로 선언된 함수 내
   }
 })
 
-app.set('port', process.env.PORT || 8080)
+app.set('port', process.env.PORT || 80)
 
 const connectionUrl = 'mongodb://root:password@localhost:27017/study?authSource=admin' // db 접속 주소입니다.
                                                                                        // mongodb://계정이름:비밀번호@url주소:포트/db명?authSorce=admin

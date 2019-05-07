@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+</head>
+
+<body>
+    <link href="css/default.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
+    <section class="module">
+        <div class="container">
+            <div id="wrap-datatable">
+                <table id="datatable" style="width:100%">
+                </table>
+            </div>
+        </div>
+        </div>
+    </section>
+
+    <div id="my_popup" class="well">
+        <div class="popup-editor-hidden">
+            <input id="index" name="index" type="hidden"></input>
+        </div>
+        <div class="popup-editor-header">
+            <label>이름 :</label>
+            <input id="name" name="name" type="text" class="popup-editor-title"></input>
+            <label>제목 :</label>
+            <input id="title" name="title" type="text" class="popup-editor-title"></input>
+        </div>
+        <div class="popup-editor-body">
+            <textarea id="editor" name="editor"></textarea>
+            <div id="distfile">&nbsp;</div>
+        </div>
+        <div class="popup-editor-footer">
+            <button onclick="uploadRow();">완료</button>
+            <button onclick="closePopup();">취소</button>
+        </div>
+    </div>
+
+    <!-- Scripts-->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.2.6/js/dataTables.select.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-popup-overlay/1.7.9/jquery.popupoverlay.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/10.1.0/classic/ckeditor.js"></script>
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+
+    <script>
+        let ckEditor
+        let table
+        let isEdit = false
+
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                toolbar: ['heading', '|', 'bold', 'italic', 'link', 'bulletedList', 'numberedList', 'blockQuote']
+            })
+            .then(editor => {
+                ckEditor = editor
+            })
+            .catch(error => console.error(error))
+
+        $(document).ready(function () {
+            table = $('#datatable').DataTable({
+                ordering: false,
+                searching: false,
+                paging: false,
+                bInfo: false,
+                ajax: {
+                    url: '/board',
+                    dataSrc: function (json) {
+                        return json.map(e => {
+                            e.push('')
+                            return e
+                        })
+                    }
+                },
+                columns: [{
+                        title: "번호",
+                        width: "10%",
+                        fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
+                            $(nTd).html(sData)
+                        }
+                    },
+                    {
+                        title: "제목",
+                        width: "50%",
+                    },
+                    {
+                        title: "작성자",
+                        width: "10%",
+                    },
+                    {
+                        title: "작성일",
+                        width: "10%",
+                        fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
+                            $(nTd).html(moment(new Date(sData)).format('YYYY-MM-DD'))
+                        }
+                    },
+                    {
+                        title: "수정",
+                        width: "7%",
+                        fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
+                            const [ index, title, , , content ] = oData
+                            $(nTd).html('').append("<button type='button'>수정</button>").children().on('click', () => editRow(index, title, content))
+                        }
+                    },
+                    {
+                        title: "삭제",
+                        width: "7%",
+                        fnCreatedCell: function (nTd, sData, oData, iRow, iCol) {
+                            const [ index, title, , , content ] = oData
+                            $(nTd).html('').append("<button type='button'>삭제</button>").children().on('click', () => deleteRow(index))
+                        }
+                    }
+                ],
+            })
+            $('#datatable').after('<button type="button" id="create" onclick="createRow()">글쓰기</button>')
+            $('#my_popup').popup({
+                escape: false,
+                blur: false,
+                transition: 'all 0.5s'
+            })
+        })
+
+        function closePopup(index) {
+            $('#my_popup').popup('hide')
+        }
+
+        function editRow(index, title, content) {
+            isEdit = true
+            $('#index').val(index)
+            $('.popup-editor-title').val(title)
+            ckEditor.setData(content)
+            $('#my_popup').popup('show')
+        }
+
+        function createRow(index) {
+            isEdit = false
+            ckEditor.setData('')
+            $('.popup-editor-title').val('')
+            $('#my_popup').popup('show')
+        }
+
+        function deleteRow(index) {
+            if (confirm("정말 삭제하시겠습니까??") == true) { //확인
+                axios.delete(`/board/${index}`).then(function (res) {
+                    if (table) table.ajax.reload()
+                }).catch(function (err) {
+                    alert(err)
+                })
+            } else {
+                return;
+            }
+        }
+
+        function uploadRow() {
+            const data = {
+                index: $('#index').val(),
+                title: $('#name').val(),
+                name: $('#title').val(),
+                type: $('#type').val(),
+                content: ckEditor.getData()
+            }
+
+            if (!data.title) {
+                alert('제목을 입력하세요')
+                return
+            }
+            const request = isEdit ? axios.put(`/board/${data.index}`, data) : axios.post('/board', data)
+
+            request.then(function (res) {
+                console.log(res.data)
+                if (table) table.ajax.reload()
+                closePopup()
+            }).catch(function (err) {
+                console.log('err', err)
+                alert(err)
+            })
+        }
+    </script>
+</body>
+
+</html>

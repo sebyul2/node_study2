@@ -48,3 +48,13 @@ table.dataTable a:hover {
     margin: 10px 10px 0 0;
     font-size: 30px;
 }
+
+.ck-content {
+    height: 660px;
+}
+
+.popup-editor-title {
+    font-size: 11pt;
+    height: 20px;
+    width: 96%;
+}
